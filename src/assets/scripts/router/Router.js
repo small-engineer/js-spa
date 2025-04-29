@@ -15,10 +15,8 @@ import { updateActiveLink } from "../navActive.js";
  * @return {string} 例: "/gallery"
  */
 function normalizePath(path) {
-  const repoBase = "/" + location.pathname.split("/")[1]; // 例: "/js-spa"
-  return path.startsWith(repoBase)
-    ? path.slice(repoBase.length) || "/"
-    : path;
+  const repoBase = "/" + location.pathname.split("/")[1];
+  return path.startsWith(repoBase) ? path.slice(repoBase.length) || "/" : path;
 }
 
 /** @const {function(HTMLElement): Promise<void>} */
@@ -94,21 +92,25 @@ export default class Router {
   async start() {
     const params = new URLSearchParams(location.search);
     const redirect = params.keys().next().value;
+
     if (redirect) {
       const repoBase = "/" + location.pathname.split("/")[1];
       const realPath = decodeURIComponent(
         redirect.replace(location.origin, "")
       );
-      const fullPath = `${repoBase}${realPath}`;
+      const fullPath = realPath.startsWith(repoBase)
+        ? realPath
+        : `${repoBase}${realPath}`;
 
       history.replaceState({}, "", fullPath);
+
       await this.titles.load();
       document.body.addEventListener("click", this.clickHandler);
       window.addEventListener("popstate", () => {
         router?.navigate(normalizePath(location.pathname));
       });
 
-      await this.navigate(normalizePath(realPath)); // realPathをnormalizeしてnavigate
+      await this.navigate(normalizePath(realPath));
       this.injectSpeculationRules();
       return;
     }
@@ -140,7 +142,9 @@ export default class Router {
     if (this.isNavigating) return;
 
     const repoBase = "/" + location.pathname.split("/")[1];
-    const fullPath = a.pathname;
+    const fullPath = realPath.startsWith(repoBase)
+      ? realPath
+      : `${repoBase}${realPath}`;
     const internalPath = normalizePath(fullPath);
 
     history.pushState({}, "", `${repoBase}${internalPath}`);
