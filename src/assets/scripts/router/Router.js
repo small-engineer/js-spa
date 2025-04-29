@@ -9,12 +9,7 @@ import TitleStore from "./TitleStore.js";
 import { updateActiveLink } from "../navActive.js";
 
 
-/**
- * * @typedef {function(string): string} TitleGetter
- * * @param {string} path ページのパス
- * * @return {string} タイトル文字列
- * * @package
- */
+/** @typedef {function(string): string} TitleGetter */
 function getRepoBase() {
   return location.hostname === "localhost"
     ? ""
@@ -116,7 +111,7 @@ export default class Router {
       await this.titles.load();
       document.body.addEventListener("click", this.clickHandler);
       window.addEventListener("popstate", () => {
-        router?.navigate(normalizePath(location.pathname));
+        this.navigate(normalizePath(location.pathname));
       });
 
       /*navigateでとばす*/
@@ -243,7 +238,12 @@ export default class Router {
       if (!isFallback) {
         await this.navigate("/404", true);
       } else {
-        this.view.textContent = "このページは現在ご利用できません";
+        this.view.innerHTML = `
+        <section class="error-page">
+          <h2>ページを表示できません</h2>
+          <p>一時的な問題が発生しています。</p>
+        </section>
+      `;
       }
     } finally {
       this.abort = null;
