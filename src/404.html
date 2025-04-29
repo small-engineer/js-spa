@@ -4,15 +4,17 @@
   <meta charset="UTF-8" />
   <title>Redirecting...</title>
   <meta name="robots" content="noindex" />
-  <meta http-equiv="refresh" content="0; url=/" />
   <script>
     (function () {
-      const base = "/" + window.location.pathname.split("/")[1];
-      const path = location.pathname + location.search + location.hash;
-      const repoBasePath = location.origin + base;
-      const target = base + "/?" + encodeURIComponent(path.replace(base, ""));
+      const origin = location.origin;
+      const repoBase = "/" + location.pathname.split("/")[1];
+      const originalPath = location.pathname + location.search + location.hash;
+      const target = origin + repoBase + "/?" + encodeURIComponent(originalPath.replace(repoBase, ""));
       location.replace(target);
     })();
   </script>
 </head>
+<body>
+  <noscript>JavaScriptが有効になっていないため、ページを表示できません。</noscript>
+</body>
 </html>
