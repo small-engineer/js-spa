@@ -8,6 +8,19 @@ import LRUCache from "./LRUCache.js";
 import TitleStore from "./TitleStore.js";
 import { updateActiveLink } from "../navActive.js";
 
+/**
+ * パスを正規化する（GitHub Pages対応）
+ * リポジトリ名を除外し、純粋なSPAルートに変換
+ * @param {string} path location.pathnameなど
+ * @return {string} 例: "/gallery"
+ */
+function normalizePath(path) {
+  const repoBase = "/" + location.pathname.split("/")[1]; // 例: "/js-spa"
+  return path.startsWith(repoBase)
+    ? path.slice(repoBase.length) || "/"
+    : path;
+}
+
 /** @const {function(HTMLElement): Promise<void>} */
 const waitAnimationEnd = (el) =>
   new Promise((resolve) =>
@@ -66,7 +79,7 @@ export default class Router {
     document.body.addEventListener("click", this.clickHandler);
     document.body.addEventListener("pointerover", this.pointeroverHandler);
 
-    this.navigate(location.pathname);
+    this.navigate(normalizePath(location.pathname));
     this.injectSpeculationRules();
   }
 
@@ -182,7 +195,7 @@ export default class Router {
 
   /**
    * 指定されたパスのページを事前に取得してキャッシュする
-   *
+   *const filePath
    * @param {string} path ページのパス
    * @return {!Promise<void>} Prefetch処理のPromise
    */
@@ -190,10 +203,11 @@ export default class Router {
     if (this.prefetchedSet.has(path) || this.cache.get(path)) return;
     this.prefetchedSet.add(path);
     try {
+      const route = normalizePath(path);
       const filePath =
-        path === "/"
+        route === "/"
           ? `${CONFIG.rootDir}/home.html`
-          : `${CONFIG.rootDir}${path}.html`;
+          : `${CONFIG.rootDir}${route}.html`;
 
       /* abort 無視 */
       const res = await fetch(filePath);
@@ -219,10 +233,11 @@ export default class Router {
     const cached = this.cache.get(path);
     if (cached) return cached;
 
+    const route = normalizePath(path);
     const filePath =
-      path === "/"
+      route === "/"
         ? `${CONFIG.rootDir}/home.html`
-        : `${CONFIG.rootDir}${path}.html`;
+        : `${CONFIG.rootDir}${route}.html`;
 
     const res = await fetch(filePath, { signal });
     if (!res.ok) throw new Error(`Failed to fetch page: ${filePath}`);
