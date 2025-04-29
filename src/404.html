@@ -6,11 +6,10 @@
   <meta name="robots" content="noindex" />
   <script>
     (function () {
-      const origin = location.origin;
-      const repoBase = "/" + location.pathname.split("/")[1];
+      const repoBase = "/js-spa"; // ★ 固定で書く
       const originalPath = location.pathname + location.search + location.hash;
-      const target = origin + repoBase + "/?" + encodeURIComponent(originalPath.replace(repoBase, ""));
-      location.replace(target);
+      const redirectPath = repoBase + "/?" + encodeURIComponent(originalPath.replace(repoBase, ""));
+      location.replace(redirectPath);
     })();
   </script>
 </head>
