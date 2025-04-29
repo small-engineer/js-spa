@@ -101,11 +101,12 @@ export default class Router {
     ev.preventDefault();
     if (this.isNavigating) return;
 
-    const path = a.pathname;
-    const normalized = normalizePath(path);
+    const repoBase = "/" + location.pathname.split("/")[1];
+    const fullPath = a.pathname;
+    const internalPath = normalizePath(fullPath);
 
-    history.pushState({}, "", path);
-    this.routeTo(normalized);
+    history.pushState({}, "", `${repoBase}${internalPath}`);
+    this.routeTo(internalPath);
   };
 
   /** navigate */
