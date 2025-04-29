@@ -42,6 +42,7 @@ build:
 
 	@echo "[BUILD] Copying HTML and static assets..."
 	@cp src/index.html             $(DIST_DIR)/
+	@cp src/404.html             $(DIST_DIR)/
 	@mkdir -p $(DIST_DIR)/assets/pages
 	@mkdir -p $(DIST_DIR)/assets/images
 	@mkdir -p $(DIST_DIR)/assets/components

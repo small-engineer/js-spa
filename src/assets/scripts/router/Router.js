@@ -92,6 +92,14 @@ export default class Router {
 
   /** Router を起動し、初期化とイベント設定を行う */
   async start() {
+    const params = new URLSearchParams(location.search);
+    const redirect = params.keys().next().value;
+    if (redirect) {
+      const realPath = decodeURIComponent(
+        redirect.replace(location.origin, "")
+      );
+      history.replaceState({}, "", realPath);
+    }
     await this.titles.load();
     document.body.addEventListener("click", this.clickHandler);
     window.addEventListener("popstate", () => {

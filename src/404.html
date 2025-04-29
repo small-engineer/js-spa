@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0; url=/" />
+    <script>
+      (function () {
+        const base = "/" + window.location.pathname.split("/")[1];
+        const url = window.location.href.replace(base, "");
+        window.location.replace(base + "/?" + encodeURIComponent(url));
+      })();
+    </script>
+  </head>
+</html>
