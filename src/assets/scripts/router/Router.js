@@ -77,7 +77,9 @@ export default class Router {
   async start() {
     await this.titles.load();
     document.body.addEventListener("click", this.clickHandler);
-    document.body.addEventListener("pointerover", this.pointeroverHandler);
+    window.addEventListener("popstate", () => {
+      router?.navigate(normalizePath(location.pathname));
+    });
 
     this.navigate(normalizePath(location.pathname));
     this.injectSpeculationRules();
@@ -99,8 +101,11 @@ export default class Router {
     ev.preventDefault();
     if (this.isNavigating) return;
 
-    history.pushState({}, "", a.pathname);
-    this.routeTo(a.pathname);
+    const path = a.pathname;
+    const normalized = normalizePath(path);
+
+    history.pushState({}, "", path);
+    this.routeTo(normalized);
   };
 
   /** navigate */
@@ -254,7 +259,7 @@ export default class Router {
   injectSpeculationRules() {
     if (!("speculationrules" in document.createElement("script"))) return;
     const aTags = Array.from(document.querySelectorAll("a[href^='/']"));
-    const urls = [...new Set(aTags.map((a) => a.pathname))];
+    const urls = [...new Set(aTags.map((a) => normalizePath(a.pathname)))];
 
     const script = document.createElement("script");
     script.type = "speculationrules";
