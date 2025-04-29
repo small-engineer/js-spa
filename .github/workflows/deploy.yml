@@ -21,7 +21,11 @@ jobs:
     - name: Install required packages
       run: |
         sudo apt-get update
-        sudo apt-get install -y make
+        sudo apt-get install -y make nodejs npm
+
+    - name: Install esbuild globally
+      run: |
+        sudo npm install -g esbuild
 
     - name: Build project
       run: make build
@@ -31,7 +35,6 @@ jobs:
 
     - name: Upload dist/ directory
       uses: actions/upload-pages-artifact@v3
-
       with:
         path: dist
 
