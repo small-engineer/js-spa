@@ -18,14 +18,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Install required packages
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y make nodejs npm
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 21
 
-    - name: Install esbuild globally
-      run: |
-        sudo npm install -g esbuild
+    - name: Install esbuild
+      run: npm install -g esbuild
 
     - name: Build project
       run: make build
