@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0; url=/" />
-    <script>
-      (function () {
-        const base = "/" + window.location.pathname.split("/")[1];
-        const url = window.location.href.replace(base, "");
-        window.location.replace(base + "/?" + encodeURIComponent(url));
-      })();
-    </script>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <title>Redirecting...</title>
+  <meta name="robots" content="noindex" />
+  <meta http-equiv="refresh" content="0; url=/" />
+  <script>
+    (function () {
+      const base = "/" + window.location.pathname.split("/")[1];
+      const path = location.pathname + location.search + location.hash;
+      const repoBasePath = location.origin + base;
+      const target = base + "/?" + encodeURIComponent(path.replace(base, ""));
+      location.replace(target);
+    })();
+  </script>
+</head>
 </html>
