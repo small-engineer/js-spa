@@ -8,6 +8,19 @@ import LRUCache from "./LRUCache.js";
 import TitleStore from "./TitleStore.js";
 import { updateActiveLink } from "../navActive.js";
 
+
+/**
+ * * @typedef {function(string): string} TitleGetter
+ * * @param {string} path ページのパス
+ * * @return {string} タイトル文字列
+ * * @package
+ */
+function getRepoBase() {
+  return location.hostname === "localhost"
+    ? ""
+    : "/" + location.pathname.split("/")[1];
+}
+
 /**
  * パスを正規化する（GitHub Pages対応）
  * リポジトリ名を除外し、純粋なSPAルートに変換
@@ -15,9 +28,10 @@ import { updateActiveLink } from "../navActive.js";
  * @return {string} 例: "/gallery"
  */
 function normalizePath(path) {
-  const repoBase = "/" + location.pathname.split("/")[1]; // 例: "/js-spa"
+  const repoBase = getRepoBase();
   return path.startsWith(repoBase) ? path.slice(repoBase.length) || "/" : path;
 }
+
 
 /** @const {function(HTMLElement): Promise<void>} */
 const waitAnimationEnd = (el) =>
@@ -75,7 +89,7 @@ export default class Router {
    * @return {string} ページのパス
    */
   applyBasePathToLinks() {
-    const repoBase = "/" + location.pathname.split("/")[1];
+    const repoBase = getRepoBase();
     const links = document.querySelectorAll(
       "a[href^='/']:not([data-no-rewrite])"
     );
@@ -96,7 +110,9 @@ export default class Router {
       const realPath = decodeURIComponent(
         redirect.replace(location.origin, "")
       );
-      history.replaceState({}, "", realPath);
+      const repoBase = getRepoBase();
+      history.replaceState({}, "", `${repoBase}${realPath}`);
+
       await this.titles.load();
       document.body.addEventListener("click", this.clickHandler);
       window.addEventListener("popstate", () => {
@@ -136,7 +152,7 @@ export default class Router {
     ev.preventDefault();
     if (this.isNavigating) return;
 
-    const repoBase = "/" + location.pathname.split("/")[1];
+    const repoBase = getRepoBase();
     const fullPath = a.pathname;
     const internalPath = normalizePath(fullPath);
 
