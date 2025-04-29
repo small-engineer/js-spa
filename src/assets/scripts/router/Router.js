@@ -73,6 +73,23 @@ export default class Router {
     this.pointeroverHandler = this.onPointerOver.bind(this);
   }
 
+  /**
+   * @return {string} ページのパス
+   */
+  applyBasePathToLinks() {
+    const repoBase = "/" + location.pathname.split("/")[1];
+    const links = document.querySelectorAll(
+      "a[href^='/']:not([data-no-rewrite])"
+    );
+
+    links.forEach((a) => {
+      const relative = a.getAttribute("href");
+      if (!relative.startsWith(repoBase)) {
+        a.setAttribute("href", `${repoBase}${relative}`);
+      }
+    });
+  }
+
   /** Router を起動し、初期化とイベント設定を行う */
   async start() {
     await this.titles.load();
@@ -135,6 +152,7 @@ export default class Router {
       if (maybePromise instanceof Promise) {
         try {
           await maybePromise;
+          this.applyBasePathToLinks();
         } catch (err) {
           throw err;
         }
