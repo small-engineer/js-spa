@@ -99,14 +99,26 @@ export default class Router {
         redirect.replace(location.origin, "")
       );
       history.replaceState({}, "", realPath);
+      await this.titles.load();
+      document.body.addEventListener("click", this.clickHandler);
+      window.addEventListener("popstate", () => {
+        router?.navigate(normalizePath(location.pathname));
+      });
+
+      /*navigateでとばす*/
+      await this.navigate(normalizePath(realPath));
+      this.injectSpeculationRules();
+      /*通常処理では不要*/
+      return;
     }
+
     await this.titles.load();
     document.body.addEventListener("click", this.clickHandler);
     window.addEventListener("popstate", () => {
       router?.navigate(normalizePath(location.pathname));
     });
 
-    this.navigate(normalizePath(location.pathname));
+    await this.navigate(normalizePath(location.pathname));
     this.injectSpeculationRules();
   }
 
